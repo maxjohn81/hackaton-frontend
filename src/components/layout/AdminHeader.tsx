@@ -18,7 +18,7 @@ export default function AdminHeader({
 
 
   return (
-    <header className="h-16 border-b flex items-center justify-between px-4 gap-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
+    <header className="h-16 border-b flex items-center justify-between px-4 gap-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0">
       <div className="md:hidden flex items-center justify-center">
         <Button
           variant="ghost"
