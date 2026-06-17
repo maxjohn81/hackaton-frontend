@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/theme-provider";
+import ClientLayoutWrapper from "@/components/layout/ClientLayoutWrapper";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -31,7 +33,10 @@ export default function RootLayout({
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {/* On déporte la détection des routes ici */}
+          <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );

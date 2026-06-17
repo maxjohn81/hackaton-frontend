@@ -5,7 +5,7 @@ export default function Home() {
     <>
       <div>
         <h1>
-          Hello Alida
+          Hello world
         </h1>
 
         <Button variant="default" size="lg">
