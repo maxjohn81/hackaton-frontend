@@ -5,7 +5,7 @@ import { LogOut, X } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import logoZenith from "./../../../public/logo_zenith.png";
+import logosmart from "./../../../public/smart.png";
 import Image from "next/image";
 import { Button } from "../ui/button";
 
@@ -24,7 +24,7 @@ export default function AdminNavbar({
       {/* sidebar desktop */}
       <aside className="relative w-64 h-screen hidden md:flex flex-col border-r">
         <div className="p-6 text-2xl text-center font-bold border-b border-stone-300">
-          <Image src={logoZenith} alt="Logo Zenith" className="w-32 mx-auto" />
+          <Image src={logosmart} alt="Logo smart" className="w-20 mx-auto" />
         </div>
         <div>
           <nav className="flex-1 p-4">
@@ -68,9 +68,9 @@ export default function AdminNavbar({
             <div className="flex justify-between w-full items-center p-4 text-2xl font-bold border-b border-stone-300">
               <div>
                 <Image
-                  src={logoZenith}
-                  alt="Logo Zenith"
-                  className="w-30 mx-auto"
+                  src={logosmart}
+                  alt="Logo smart"
+                  className="w-20 mx-auto"
                 />
               </div>
               <div>
