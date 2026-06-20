@@ -1,11 +1,11 @@
 import {
+  TriangleAlert,
   LayoutDashboard,
+  Building,
   Users,
-  Briefcase,
-  Calendar,
-  BarChart2,
+  BellRing,
+  Dam,
   Settings,
-  Theater,
 } from "lucide-react";
 
 import { User, Mail, Bell, Shield, Globe, CreditCard } from "lucide-react";
@@ -15,16 +15,13 @@ import { NavItem, NavItemAdmin, NotificationSetting } from "@/@types/types";
 // ─── Nav items ────────────────────────────────────────────────────────────────
 export const NAV_ITEMS: NavItem[] = [
   { label: "Tableau de bord", href: "/admin/dashboard", icon: LayoutDashboard },
-  { label: "Candidats", href: "/admin/candidates", icon: Users },
+  { label: "Gestion des villes", href: "/admin/cities", icon: Building },
+  { label: "Utilisateurs", href: "/admin/users", icon: Users },
   {
-    label: "Réseau Talents", // Nom plus pro pour tes "FreeCandidates"
-    href: "/admin/talents",
-    icon: Globe,
+    label: "Incidents",href: "/admin/",icon: TriangleAlert,
   },
-  { label: "Offres d'emploi", href: "/admin/jobs", icon: Briefcase },
-  { label: "Entretiens", href: "/admin/interviews", icon: Calendar },
-  { label: "Analytiques", href: "/admin/analytics", icon: BarChart2 },
-  { label: "Articles", href: "/admin/article", icon: Theater },
+  { label: "Alertes", href: "/admin/jobs", icon: BellRing },
+  { label: "Controle des feux", href: "/admin/interviews", icon:  Dam },
   { label: "Paramètres", href: "/admin/settings", icon: Settings },
 ];
 
