@@ -71,7 +71,7 @@ export default function AdminNavbar({
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`${pathname === item.href ? "text-primary bg-primary/10 border-l-7 border-l-emerald-500" : ""} flex text-sm font-semibold items-center gap-4 p-3.5 rounded-lg hover:text-primary duration-200 hover:bg-stone-50 dark:hover:bg-secondary`}
+                    className={`${pathname === item.href ? "text-primary bg-primary/10 border-l-7 border-l-blue-500" : ""} flex text-sm font-semibold items-center gap-4 p-3.5 rounded-lg hover:text-primary duration-200 hover:bg-stone-50 dark:hover:bg-secondary`}
                   >
                     <item.icon size={20} />
                     {item.label}
@@ -125,7 +125,7 @@ export default function AdminNavbar({
                       <Link
                         href={item.href}
                         onClick={toggleMenu}
-                        className={`${pathname === item.href ? "text-primary  bg-primary/10 border-l-5 border-l-emerald-500" : ""} flex text-sm font-semibold items-center gap-4 p-3.5 rounded-lg hover:text-primary hover:bg-stone-50 dark:hover:bg-stone-950 duration-200`}
+                        className={`${pathname === item.href ? "text-primary  bg-primary/10 border-l-5 border-l-blue-500" : ""} flex text-sm font-semibold items-center gap-4 p-3.5 rounded-lg hover:text-primary hover:bg-stone-50 dark:hover:bg-stone-950 duration-200`}
                       >
                         <item.icon size={20} />
                         {item.label}
