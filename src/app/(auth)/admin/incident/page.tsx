@@ -1,45 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Share2, Sliders, Car, Construction, AlertTriangle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, Share2, Sliders, Car, Construction, AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getAllIncidentsService, Incident } from "@/services/incidentService";
+import { toast } from "sonner";
 
-/**
- * IncidentDashboard
- * Stack : Next.js (App Router) + shadcn/ui (Button, Input, Card, Badge)
- *
- * Installation :
- *   npx shadcn@latest add button input card badge
- *
- * Thème : ce composant n'utilise QUE les couleurs sémantiques shadcn
- * (bg-background, text-foreground, text-muted-foreground, border, bg-muted, etc.)
- * Aucune couleur en dur (pas de bg-red-500, text-blue-600...).
- * Le rendu s'adapte automatiquement au thème clair/sombre défini dans globals.css.
- *
- * Modèle de données attendu (ex. Prisma) :
- *   model Incident {
- *     id          String   @id @default(cuid())
- *     type        String   // "accident" | "embouteillage" | "route_bloquee"
- *     description String
- *     image       String?
- *     ville       String
- *     status      String   // "en_attente" | "confirme" | "resolu"
- *     createdAt   DateTime @default(now())
- *   }
- *
- * Images par défaut : place tes propres visuels dans /public/images/default/
- *   - accident.jpg
- *   - embouteillage.jpg
- *   - route_bloquee.jpg
- * Si incident.image est null, l'image par défaut du type est utilisée.
- * Si jamais le fichier n'existe pas encore, une icône de repli s'affiche.
- */
-
-// ---- Helper : transforme un datetime en "il y a Xmin" ----
-function timeAgo(date) {
+function timeAgo(date: string | Date) {
  const d = typeof date === "string" ? new Date(date) : date;
  const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
 
@@ -52,73 +23,61 @@ function timeAgo(date) {
  return `il y a ${days} j`;
 }
 
-// ---- Images par défaut par type (à placer dans /public/images/default/) ----
-const defaultImages = {
+const defaultImages: Record<string, string> = {
  accident: "/images/default/accident.jpg",
  embouteillage: "/images/default/embouteillage.jpg",
  route_bloquee: "/images/default/route_bloquee.jpg",
 };
 
-const fallbackIcons = {
+const fallbackIcons: Record<string, any> = {
  accident: Car,
  embouteillage: AlertTriangle,
  route_bloquee: Construction,
 };
 
-// ---- Données d'exemple (à remplacer par un fetch /api/incidents) ----
-const incidents = [
- {
-  id: "INC-8821",
-  type: "accident",
-  description: "Collision frontale, 2 véhicules impliqués, entrave majeure",
-  image: null,
-  ville: "Antananarivo - Av. des Champs",
-  status: "en_attente",
-  createdAt: new Date(Date.now() - 4 * 60 * 1000),
- },
- {
-  id: "INC-7650",
-  type: "embouteillage",
-  description: "Embouteillage dense, temps d'attente estimé +25 mins",
-  image: null,
-  ville: "Tunnel Sud",
-  status: "confirme",
-  createdAt: new Date(Date.now() - 12 * 60 * 1000),
- },
- {
-  id: "INC-7012",
-  type: "route_bloquee",
-  description: "Travaux de maintenance, voie rouverte à la circulation",
-  image: null,
-  ville: "Zone 230",
-  status: "resolu",
-  createdAt: new Date(Date.now() - 38 * 60 * 1000),
- },
-];
-
 const filters = ["Tous les types", "accident", "embouteillage", "route_bloquee"];
 
-const typeLabels = {
+const typeLabels: Record<string, string> = {
  accident: "Accident",
  embouteillage: "Embouteillage",
  route_bloquee: "Route bloquée",
 };
 
-const statusLabels = {
+const statusLabels: Record<string, string> = {
  en_attente: "En attente",
  confirme: "Confirmé",
  resolu: "Résolu",
 };
 
-const actionLabels = {
+const actionLabels: Record<string, string> = {
  accident: "Déployer unité",
  embouteillage: "Ajuster feux",
  route_bloquee: "Marquer rouvert",
 };
 
 export default function IncidentDashboard() {
+ const router = useRouter();
  const [activeFilter, setActiveFilter] = useState("Tous les types");
  const [query, setQuery] = useState("");
+ const [incidents, setIncidents] = useState<Incident[]>([]);
+ const [isLoading, setIsLoading] = useState(true);
+
+ useEffect(() => {
+  const fetchIncidents = async () => {
+   const result = await getAllIncidentsService();
+   if (result.success) {
+    setIncidents(result.data);
+   } else {
+    toast.error(result.message);
+   }
+   setIsLoading(false);
+  };
+  fetchIncidents();
+
+  // Rafraîchissement automatique toutes les 30s pour rester "Live"
+  const interval = setInterval(fetchIncidents, 30000);
+  return () => clearInterval(interval);
+ }, []);
 
  const filtered = incidents.filter((incident) => {
   const matchesFilter = activeFilter === "Tous les types" || incident.type === activeFilter;
@@ -146,11 +105,9 @@ export default function IncidentDashboard() {
      </p>
     </div>
 
-    {/* Stat cards */}
-    <div className="grid grid-cols-3 gap-3 sm:flex">
+    <div className="grid grid-cols-2 gap-3 sm:flex">
      <StatCard label="Actifs" value={activeCount} />
-     <StatCard label="Résolus (24h)" value={resolvedCount} />
-     <StatCard label="Délai moy." value="12m" />
+     <StatCard label="Résolus" value={resolvedCount} />
     </div>
    </div>
 
@@ -182,7 +139,6 @@ export default function IncidentDashboard() {
      </div>
     </div>
 
-    {/* Live indicator */}
     <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
      <span className="relative flex h-2 w-2">
       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-foreground opacity-50" />
@@ -194,20 +150,30 @@ export default function IncidentDashboard() {
 
    {/* Incident list */}
    <div className="mt-6 flex flex-col gap-3">
-    {filtered.map((incident) => (
-     <IncidentCard key={incident.id} incident={incident} />
-    ))}
-    {filtered.length === 0 && (
+    {isLoading ? (
+     <div className="flex items-center justify-center gap-2 py-10 text-sm text-muted-foreground">
+      <Loader2 className="h-4 w-4 animate-spin" />
+      Chargement des incidents...
+     </div>
+    ) : filtered.length === 0 ? (
      <p className="py-8 text-center text-sm text-muted-foreground">
-      Aucun incident ne correspond à cette recherche.
+      Aucun incident .
      </p>
+    ) : (
+     filtered.map((incident) => (
+      <IncidentCard
+       key={incident.id}
+       incident={incident}
+       onClick={() => router.push(`/admin/incidents/${incident.id}`)}
+      />
+     ))
     )}
    </div>
   </div>
  );
 }
 
-function StatCard({ label, value }) {
+function StatCard({ label, value }: { label: string; value: number }) {
  return (
   <Card className="px-3 py-2.5 sm:px-4">
    <CardContent className="p-0">
@@ -218,18 +184,16 @@ function StatCard({ label, value }) {
  );
 }
 
-function IncidentCard({ incident }) {
+function IncidentCard({ incident, onClick }: { incident: Incident; onClick: () => void }) {
  const [imgError, setImgError] = useState(false);
  const FallbackIcon = fallbackIcons[incident.type];
  const imageSrc = incident.image || defaultImages[incident.type];
 
  return (
-  <Card className="transition-colors hover:border-foreground/30">
+  <Card className="cursor-pointer transition-colors hover:border-foreground/30" onClick={onClick}>
    <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
-    {/* Image / thumbnail */}
     <div className="flex h-14 w-full sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted sm:h-14">
      {!imgError ? (
-      // eslint-disable-next-line @next/next/no-img-element
       <img
        src={imageSrc}
        alt={typeLabels[incident.type]}
@@ -241,12 +205,9 @@ function IncidentCard({ incident }) {
      )}
     </div>
 
-    {/* Content */}
     <div className="flex-1 min-w-0">
      <div className="flex flex-wrap items-center gap-2">
-      <h3 className="text-sm font-semibold text-foreground">
-       {incident.description}
-      </h3>
+      <h3 className="text-sm font-semibold text-foreground">{incident.description}</h3>
       <Badge variant="secondary">{statusLabels[incident.status]}</Badge>
      </div>
      <p className="mt-1 text-xs text-muted-foreground">
@@ -257,8 +218,7 @@ function IncidentCard({ incident }) {
      </p>
     </div>
 
-    {/* Actions */}
-    <div className="flex items-center gap-2 shrink-0">
+    <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
      <Button size="sm" className="flex-1 sm:flex-none">
       {actionLabels[incident.type]}
      </Button>
