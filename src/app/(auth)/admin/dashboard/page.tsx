@@ -2,6 +2,11 @@
 
 import { AlertTriangle, BellRing, Building2, UsersRound } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const Map = dynamic(() => import("./map"), {
+  ssr: false,
+});
 
 const cards = [
   {
@@ -97,9 +102,9 @@ function SummaryCard() {
         </div>
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 space-y-2">
         {summaryItems.map((item) => (
-          <div key={item.label} className="space-y-3 rounded-3xl bg-slate-100/80 p-4 dark:bg-slate-950/80">
+          <div key={item.label} className="space-y-3 rounded-3xl bg-slate-100/80 p-2 dark:bg-slate-950/80">
             <div className="flex items-center justify-between gap-4 text-sm font-medium text-slate-900 dark:text-slate-100">
               <span>{item.label}</span>
               <span className={`text-xs font-semibold ${item.highlight}`}>{item.value}</span>
@@ -158,30 +163,16 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,420px)] overflow-hidden">
-        <div className="rounded-3xl border border-slate-700/80 bg-slate-950/90 p-5 shadow-xl shadow-slate-950/20">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(20px,420px)] overflow-hidden">
+        <div className="rounded-3xl    h-70 md:150 ">
           <div className="relative overflow-hidden rounded-[2rem] border border-slate-700/80 bg-slate-950/80">
             <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-slate-700/80 bg-slate-950/90 px-3 py-2 text-sm text-slate-100 shadow-xl shadow-slate-950/20">
               <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-500/30" />
               Système opérationnel - Live
             </div>
 
-            <div className="relative h-[260px] sm:h-[360px] lg:h-screen linear-gradient(180deg,_#0f172a_0%,_#020617_100%)]">
-              <div className="absolute inset-0 flex items-center justify-center text-3xl font-semibold uppercase tracking-[0.24em] text-slate-500/60">
-                Carte de trafic
-              </div>
-            </div>
-
-            <div className="absolute left-5 bottom-5 rounded-3xl border border-slate-700/80 bg-slate-950/90 p-4 text-sm text-slate-200 shadow-xl shadow-slate-950/30">
-              <p className="text-xs uppercase tracking-[0.24em] text-slate-400">LÉGENDE TRAFIC</p>
-              <div className="mt-3 space-y-2">
-                {legend.map((item) => (
-                  <div key={item.label} className="flex items-center gap-3">
-                    <span className={`h-1.5 w-8 rounded-full ${item.color}`} />
-                    <span className="text-sm text-slate-400">{item.label}</span>
-                  </div>
-                ))}
-              </div>
+            <div className="relative h-[260px] sm:h-[500px] md:h-[620px]  linear-gradient(180deg,_#0f172a_0%,_#020617_100%)]">
+               <Map/>
             </div>
           </div>
         </div>
