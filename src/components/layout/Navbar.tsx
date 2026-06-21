@@ -52,15 +52,15 @@ export default function Navbar() {
        onClick={() => setIsOpen(false)}
       >
        <Image
-        src="/logo_white.png"
-        alt="Zenith Logo"
+        src="/smart.png"
+        alt="smart Logo"
         fill
         className="object-contain rounded-2xl object-left dark:hidden"
         priority
        />
        <Image
-        src="/logo_dark.png"
-        alt="Zenith Logo"
+        src="/smart.png"
+        alt="smart Logo"
         fill
         className="object-contain rounded-2xl object-left hidden dark:block"
         priority
