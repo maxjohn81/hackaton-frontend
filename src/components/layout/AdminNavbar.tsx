@@ -8,17 +8,54 @@ import { usePathname } from "next/navigation";
 import logosmart from "./../../../public/smart.png";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import { getUserRole } from "@/hooks";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AdminNavbarProps {
   openMenu: boolean;
   toggleMenu: () => void;
 }
 
+
+
+
+// ... dans ton composant
+
+
+// Initiales générées à partir du username (ex: "Rivo Andriharisoa" -> "RA")
+const getInitials = (name?: string) => {
+  if (!name) return "??";
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+// Traduction du rôle technique en libellé lisible
+const roleLabel = (role?: string) => {
+  switch (role) {
+    case "superadmin":
+      return "Super Administrateur";
+    case "admin":
+      return "Administrateur";
+    default:
+      return role ?? "Utilisateur";
+  }
+};
+
+
+
 export default function AdminNavbar({
   openMenu,
   toggleMenu,
 }: AdminNavbarProps) {
   const pathname = usePathname();
+  const userRole = getUserRole();
+
+  const user = useAuth((state) => state.user);
+  const filteredNav = userRole === "admin" ? NAV_ITEMS.filter(item => item.label !== "Utilisateurs") : NAV_ITEMS;
   return (
     <>
       {/* sidebar desktop */}
@@ -30,7 +67,7 @@ export default function AdminNavbar({
           <nav className="flex-1 p-4">
             {/* Vos liens ici */}
             <ul className="space-y-2">
-              {NAV_ITEMS.map((item) => (
+              {filteredNav.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
@@ -44,12 +81,12 @@ export default function AdminNavbar({
             </ul>
           </nav>
           <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-4 border-t p-4">
-            <div className="rounded-full text-xs text-white p-2 bg-sky-500">
-              RV
+            <div className="rounded-full p-2 text-xs bg-sky-500 text-white">
+              {getInitials(user?.name)}
             </div>
             <div className="text-xs">
-              <h1>Rivo Andriharisoa</h1>
-              <p>Recruteur</p>
+              <h1>{user?.name ?? "Invité"}</h1>
+              <p>{roleLabel(user?.role)}</p>
             </div>
           </div>
         </div>
@@ -83,7 +120,7 @@ export default function AdminNavbar({
               <nav className="flex-1 p-4">
                 {/* liens de navigation  */}
                 <ul className="space-y-2">
-                  {NAV_ITEMS.map((item) => (
+                  {filteredNav.map((item) => (
                     <li key={item.href}>
                       <Link
                         href={item.href}
@@ -99,11 +136,11 @@ export default function AdminNavbar({
               </nav>
               <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-4 border-t p-4">
                 <div className="rounded-full p-2 text-xs bg-sky-500 text-white">
-                  RV
+                  {getInitials(user?.name)}
                 </div>
                 <div className="text-xs">
-                  <h1>Rivo Andriharisoa</h1>
-                  <p>Recruteur</p>
+                  <h1>{user?.name ?? "Invité"}</h1>
+                  <p>{roleLabel(user?.role)}</p>
                 </div>
               </div>
             </div>

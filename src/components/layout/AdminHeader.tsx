@@ -9,12 +9,39 @@ import { Input } from "../ui/input";
 import { CardTitle } from "../ui/card";
 // import { api } from "@/api"; // Import de ton instance API
 import { toast } from "sonner";
+import LogoutButton from "../LogoutBtn";
 
 export default function AdminHeader({
   toggleMenu,
 }: {
   toggleMenu: () => void;
 }) {
+  const router = useRouter();
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+
+      // 1. Appel au backend pour invalider la session (optionnel mais propre)
+      // await api.auth.logout();
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion backend:", error);
+      // On continue le processus même si le backend échoue
+      // pour ne pas bloquer l'utilisateur localement.
+    } finally {
+      // 2. Nettoyage du stockage local
+      localStorage.removeItem("zenith-access-token");
+      localStorage.removeItem("zenith-auth-storage");
+      // 3. Feedback et redirection
+      toast.success("Déconnexion réussie");
+      router.push("/login");
+      setIsLoggingOut(false);
+    }
+  };
 
 
   return (
@@ -49,7 +76,7 @@ export default function AdminHeader({
 
         <div className="h-6 w-[1px] bg-border mx-2 hidden md:block" />
 
-        
+        <LogoutButton/>
       </div>
     </header>
   );

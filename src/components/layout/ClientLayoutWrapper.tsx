@@ -2,6 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
+import { Toaster } from "@/components/ui/sonner"; // N'oublie pas ton Toaster ici !
+
 // oublie pas ton Toaster ici !
 
 export default function ClientLayoutWrapper({
@@ -22,6 +24,7 @@ export default function ClientLayoutWrapper({
    {!shouldHideLayout && <Navbar />}
    <main className={!shouldHideLayout ? "pt-16" : ""}>{children}</main>
 
+   <Toaster position="top-right" richColors />
   </>
  );
 }
