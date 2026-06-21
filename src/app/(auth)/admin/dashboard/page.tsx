@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, BellRing, Building2, ChevronRight, Eye, Sparkles, Truck, UsersRound, Wrench } from "lucide-react";
+import { AlertTriangle, BellRing, Building2, UsersRound } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const cards = [
@@ -10,7 +10,7 @@ const cards = [
     value: "14,284",
     badge: "+12%",
     badgeClass: "text-emerald-400",
-    iconBg: "bg-slate-800 text-sky-400",
+    iconBg: "dark:bg-slate-800 text-sky-400 bg-gray-100",
   },
   {
     icon: Building2,
@@ -18,7 +18,7 @@ const cards = [
     value: "42",
     badge: "Active",
     badgeClass: "text-sky-300",
-    iconBg: "bg-slate-800 text-slate-200",
+    iconBg: "dark:bg-slate-800 text-gray-700 dark:text-slate-200 bg-gray-100",
   },
   {
     icon: AlertTriangle,
@@ -26,7 +26,7 @@ const cards = [
     value: "18",
     badge: "En cours",
     badgeClass: "text-rose-300",
-    iconBg: "bg-slate-800 text-rose-400",
+    iconBg: "dark:bg-slate-800 text-rose-400 bg-rose-200",
   },
   {
     icon: BellRing,
@@ -34,7 +34,7 @@ const cards = [
     value: "326",
     badge: "Temps réel",
     badgeClass: "text-sky-300",
-    iconBg: "bg-slate-800 text-sky-400",
+    iconBg: "dark:bg-slate-800 text-sky-400 bg-gray-100",
   },
 ];
 
@@ -54,12 +54,6 @@ const trafficFlowData = [
   { label: "23:59", value: 16 },
 ];
 
-const incidents = [
-  { type: "Collision", location: "Av. des Champs-Élysées", time: "Il y a 4 min", severity: "Haute", color: "bg-rose-500", icon: AlertTriangle },
-  { type: "Travaux", location: "Bd de Magenta", time: "Il y a 12 min", severity: "Moyenne", color: "bg-amber-500", icon: Wrench },
-  { type: "Panne véhicule", location: "Rue de Rivoli", time: "Il y a 22 min", severity: "Faible", color: "bg-emerald-500", icon: Truck },
-];
-
 const legend = [
   { label: "Fluide", color: "bg-emerald-400" },
   { label: "Moyen", color: "bg-amber-400" },
@@ -77,7 +71,7 @@ type StatCardProps = {
 
 function StatCard({ icon: Icon, title, value, badge, badgeClass, iconBg }: StatCardProps) {
   return (
-    <div className="rounded-3xl border border-slate-700/80 bg-slate-950/90 p-5 shadow-xl shadow-slate-950/20">
+    <div className="rounded-3xl border border-slate-200/80 bg-white/90 p-5 shadow-xl shadow-slate-950/10 dark:border-slate-700/80 dark:bg-slate-950/90 dark:shadow-slate-950/20">
       <div className="flex items-start justify-between gap-4">
         <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${iconBg} shadow-lg shadow-slate-950/20`}>
           <Icon className="h-6 w-6" />
@@ -87,7 +81,7 @@ function StatCard({ icon: Icon, title, value, badge, badgeClass, iconBg }: StatC
 
       <div className="mt-8">
         <p className="text-xs uppercase tracking-[0.24em] text-slate-400">{title}</p>
-        <p className="mt-3 text-4xl font-semibold text-slate-100">{value}</p>
+        <p className="mt-3 text-4xl font-semibold text-gray-800 dark:text-slate-100">{value}</p>
       </div>
     </div>
   );
@@ -95,26 +89,22 @@ function StatCard({ icon: Icon, title, value, badge, badgeClass, iconBg }: StatC
 
 function SummaryCard() {
   return (
-    <div className="rounded-3xl border border-slate-700/80 bg-slate-950/90 p-5 shadow-xl shadow-slate-950/20">
+    <div className="rounded-3xl border border-slate-200/80 bg-white/90 p-5 shadow-xl shadow-slate-950/10 dark:border-slate-700/80 dark:bg-slate-950/90 dark:shadow-slate-950/20">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">Résumé Temps Réel</p>
-          <p className="mt-2 text-xs text-slate-500">Mise à jour dynamique</p>
-        </div>
-        <div className="flex items-center gap-2 rounded-full border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-xs uppercase tracking-[0.20em] text-slate-300">
-          <Sparkles className="h-4 w-4 text-slate-300" />
-          Live
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-600 dark:text-slate-400">Résumé Temps Réel</p>
+          <p className="mt-2 text-xs text-slate-600 dark:text-slate-400">Mise à jour dynamique</p>
         </div>
       </div>
 
       <div className="mt-6 space-y-4">
         {summaryItems.map((item) => (
-          <div key={item.label} className="space-y-3 rounded-3xl bg-slate-950/80 p-4">
-            <div className="flex items-center justify-between gap-4 text-sm font-medium text-slate-100">
+          <div key={item.label} className="space-y-3 rounded-3xl bg-slate-100/80 p-4 dark:bg-slate-950/80">
+            <div className="flex items-center justify-between gap-4 text-sm font-medium text-slate-900 dark:text-slate-100">
               <span>{item.label}</span>
               <span className={`text-xs font-semibold ${item.highlight}`}>{item.value}</span>
             </div>
-            <div className="h-2.5 rounded-full bg-slate-800">
+            <div className="h-2.5 rounded-full bg-slate-300 dark:bg-slate-800">
               <div className={`h-full rounded-full ${item.color}`} style={{ width: item.progress }} />
             </div>
           </div>
@@ -128,7 +118,7 @@ function TrafficFlowCard() {
   const maxValue = Math.max(...trafficFlowData.map((item) => item.value));
 
   return (
-    <div className="rounded-3xl border border-slate-700/80 bg-slate-950/90 p-5 shadow-xl shadow-slate-950/20">
+    <div className="rounded-3xl border border-slate-200/80 bg-white/90 p-5 shadow-xl shadow-slate-950/10 dark:border-slate-700/80 dark:bg-slate-950/90 dark:shadow-slate-950/20">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">Flux de Trafic</p>
@@ -153,7 +143,7 @@ function TrafficFlowCard() {
 
 export default function Dashboard() {
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+    <div className="space-y-6 px-4 py-6 sm:px-6 sm:py-8 bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
           <StatCard
