@@ -1,47 +1,16 @@
 "use client";
 
-import { AlertTriangle, BellRing, Building2, UsersRound } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AlertTriangle, Building2, UsersRound } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import dynamic from "next/dynamic";
+import { getAllUsersService } from "@/services/userService";
+import { getAllIncidentsService } from "@/services/incidentService";
+import { toast } from "sonner";
 
 const Map = dynamic(() => import("./map"), {
   ssr: false,
 });
-
-const cards = [
-  {
-    icon: UsersRound,
-    title: "Utilisateurs totaux",
-    value: "14,284",
-    badge: "+12%",
-    badgeClass: "text-emerald-400",
-    iconBg: "dark:bg-slate-800 text-sky-400 bg-gray-100",
-  },
-  {
-    icon: Building2,
-    title: "Villes connectées",
-    value: "42",
-    badge: "Active",
-    badgeClass: "text-sky-300",
-    iconBg: "dark:bg-slate-800 text-gray-700 dark:text-slate-200 bg-gray-100",
-  },
-  {
-    icon: AlertTriangle,
-    title: "Incidents signalés",
-    value: "18",
-    badge: "En cours",
-    badgeClass: "text-rose-300",
-    iconBg: "dark:bg-slate-800 text-rose-400 bg-rose-200",
-  },
-  {
-    icon: BellRing,
-    title: "Alertes trafic",
-    value: "326",
-    badge: "Temps réel",
-    badgeClass: "text-sky-300",
-    iconBg: "dark:bg-slate-800 text-sky-400 bg-gray-100",
-  },
-];
 
 const summaryItems = [
   { label: "Zone Nord - Paris", value: "Fluide", progress: "85%", color: "bg-emerald-400", highlight: "text-emerald-400" },
@@ -59,12 +28,6 @@ const trafficFlowData = [
   { label: "23:59", value: 16 },
 ];
 
-const legend = [
-  { label: "Fluide", color: "bg-emerald-400" },
-  { label: "Moyen", color: "bg-amber-400" },
-  { label: "Congestion", color: "bg-rose-400" },
-];
-
 type StatCardProps = {
   icon: LucideIcon;
   title: string;
@@ -72,11 +35,12 @@ type StatCardProps = {
   badge: string;
   badgeClass: string;
   iconBg: string;
+  isLoading?: boolean;
 };
 
-function StatCard({ icon: Icon, title, value, badge, badgeClass, iconBg }: StatCardProps) {
+function StatCard({ icon: Icon, title, value, badge, badgeClass, iconBg, isLoading }: StatCardProps) {
   return (
-    <div className="rounded-3xl border border-slate-200/80 bg-white/90 p-5 shadow-xl shadow-slate-950/10 dark:border-slate-700/80 dark:bg-slate-950/90 dark:shadow-slate-950/20">
+    <div className="rounded-3xl border p-5">
       <div className="flex items-start justify-between gap-4">
         <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${iconBg} shadow-lg shadow-slate-950/20`}>
           <Icon className="h-6 w-6" />
@@ -86,7 +50,13 @@ function StatCard({ icon: Icon, title, value, badge, badgeClass, iconBg }: StatC
 
       <div className="mt-8">
         <p className="text-xs uppercase tracking-[0.24em] text-slate-400">{title}</p>
-        <p className="mt-3 text-4xl font-semibold text-gray-800 dark:text-slate-100">{value}</p>
+        <p className="mt-3 text-4xl font-semibold text-gray-800 dark:text-slate-100">
+          {isLoading ? (
+            <span className="inline-block h-9 w-16 animate-pulse rounded-md bg-slate-300 dark:bg-slate-700" />
+          ) : (
+            value
+          )}
+        </p>
       </div>
     </div>
   );
@@ -94,17 +64,17 @@ function StatCard({ icon: Icon, title, value, badge, badgeClass, iconBg }: StatC
 
 function SummaryCard() {
   return (
-    <div className="rounded-3xl border border-slate-200/80 bg-white/90 p-5 shadow-xl shadow-slate-950/10 dark:border-slate-700/80 dark:bg-slate-950/90 dark:shadow-slate-950/20">
+    <div className="rounded-3xl border p-5 shadow-xl">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-600 dark:text-slate-400">Résumé Temps Réel</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-600 dark:text-slate-400">Résumé Temps Réel</p>
           <p className="mt-2 text-xs text-slate-600 dark:text-slate-400">Mise à jour dynamique</p>
         </div>
       </div>
 
       <div className="mt-6 space-y-2">
         {summaryItems.map((item) => (
-          <div key={item.label} className="space-y-3 rounded-3xl bg-slate-100/80 p-2 dark:bg-slate-950/80">
+          <div key={item.label} className="space-y-3 rounded-3xl p-2">
             <div className="flex items-center justify-between gap-4 text-sm font-medium text-slate-900 dark:text-slate-100">
               <span>{item.label}</span>
               <span className={`text-xs font-semibold ${item.highlight}`}>{item.value}</span>
@@ -123,7 +93,7 @@ function TrafficFlowCard() {
   const maxValue = Math.max(...trafficFlowData.map((item) => item.value));
 
   return (
-    <div className="rounded-3xl border border-slate-200/80 bg-white/90 p-5 shadow-xl shadow-slate-950/10 dark:border-slate-700/80 dark:bg-slate-950/90 dark:shadow-slate-950/20">
+    <div className="rounded-3xl border p-4">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">Flux de Trafic</p>
@@ -145,10 +115,61 @@ function TrafficFlowCard() {
   );
 }
 
-
 export default function Dashboard() {
+  const [usersTotal, setUsersTotal] = useState<number | null>(null);
+  const [incidentsTotal, setIncidentsTotal] = useState<number | null>(null);
+  const [incidentsActive, setIncidentsActive] = useState<number | null>(null);
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const [usersResult, incidentsResult] = await Promise.all([
+        getAllUsersService(),
+        getAllIncidentsService(),
+      ]);
+
+      if (usersResult.success) {
+        setUsersTotal(usersResult.data.length);
+      } else {
+        toast.error(usersResult.message);
+      }
+
+      if (incidentsResult.success) {
+        setIncidentsTotal(incidentsResult.data.length);
+        setIncidentsActive(
+          incidentsResult.data.filter((i) => i.status !== "resolu").length
+        );
+      } else {
+        toast.error(incidentsResult.message);
+      }
+
+      setIsLoadingStats(false);
+    };
+
+    fetchStats();
+  }, []);
+
+  const cards = [
+    {
+      icon: UsersRound,
+      title: "Utilisateurs totaux",
+      value: usersTotal !== null ? usersTotal.toLocaleString("fr-FR") : "—",
+      badge: "Total",
+      badgeClass: "text-sky-400",
+      iconBg: "dark:bg-slate-800 text-sky-400 bg-gray-100",
+    },
+    {
+      icon: AlertTriangle,
+      title: "Incidents signalés",
+      value: incidentsTotal !== null ? incidentsTotal.toLocaleString("fr-FR") : "—",
+      badge: incidentsActive !== null ? `${incidentsActive} en cours` : "—",
+      badgeClass: "text-rose-300",
+      iconBg: "dark:bg-slate-800 text-rose-400 bg-rose-200",
+    },
+  ];
+
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 sm:py-8 bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div className="space-y-6 px-4 py-6 sm:px-6 sm:py-8">
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
           <StatCard
@@ -159,20 +180,21 @@ export default function Dashboard() {
             badge={card.badge}
             badgeClass={card.badgeClass}
             iconBg={card.iconBg}
+            isLoading={isLoadingStats}
           />
         ))}
       </div>
 
-      <div className="grid gap-4 sm:space-y-20  lg:grid-cols-[minmax(0,1fr)_minmax(200px,420px)] overflow-hidden">
-        <div className="rounded-3xl    h-70 md:150 ">
+      <div className="grid gap-4 sm:space-y-20 lg:grid-cols-[minmax(0,1fr)_minmax(200px,420px)] overflow-hidden">
+        <div className="rounded-3xl h-70 md:150">
           <div className="relative overflow-hidden rounded-[2rem] border border-slate-700/80 bg-slate-950/80">
             <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-slate-700/80 bg-slate-950/90 px-3 py-2 text-sm text-slate-100 shadow-xl shadow-slate-950/20">
               <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-500/30" />
               Système opérationnel - Live
             </div>
 
-            <div className="relative h-70 sm:h-90 lg:h-150 md:h-90  linear-gradient(180deg,_#0f172a_0%,_#020617_100%)]">
-               <Map/>
+            <div className="relative h-70 sm:h-90 lg:h-150 md:h-90">
+              <Map />
             </div>
           </div>
         </div>

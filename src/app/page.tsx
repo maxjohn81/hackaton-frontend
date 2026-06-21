@@ -1,9 +1,5 @@
-import Mes from './register/Mes'
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <main>
-      <Mes/>
-    </main>
-  );
+  redirect("/login");
 }

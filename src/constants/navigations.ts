@@ -15,14 +15,13 @@ import { NavItem, NavItemAdmin, NotificationSetting } from "@/@types/types";
 // ─── Nav items ────────────────────────────────────────────────────────────────
 export const NAV_ITEMS: NavItem[] = [
   { label: "Tableau de bord", href: "/admin/dashboard", icon: LayoutDashboard },
-  { label: "Gestion des villes", href: "/admin/cities", icon: Building },
   { label: "Utilisateurs", href: "/admin/users", icon: Users },
   {
-    label: "Incidents",href: "/admin/",icon: TriangleAlert,
+    label: "Incidents",href: "/admin/incident",icon: TriangleAlert,
   },
-  { label: "Alertes", href: "/admin/jobs", icon: BellRing },
-  { label: "Controle des feux", href: "/admin/interviews", icon:  Dam },
-  { label: "Paramètres", href: "/admin/settings", icon: Settings },
+  { label: "Alertes", href: "/admin/alerte", icon: BellRing },
+  { label: "Controle des feux", href: "/admin/controlle", icon:  Dam },
+  { label: "Paramètres", href: "/admin/parametre", icon: Settings },
 ];
 
 // ── Nav config ────────────────────────────────────────────────────────────────
