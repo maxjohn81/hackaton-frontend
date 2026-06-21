@@ -25,6 +25,11 @@ type GetIncidentResponse = {
  data: Incident;
 };
 
+type DeleteIncidentResponse = {
+ success: boolean;
+ message: string;
+};
+
 export const getAllIncidentsService = async () => {
  try {
   const response = await api.get<GetIncidentsResponse>("/incident/");
@@ -40,21 +45,19 @@ export const getAllIncidentsService = async () => {
 };
 
 
-export const updateIncidentStatusService = async (
- id: string,
- status: IncidentStatus
-) => {
+export const deleteIncidentService = async (id: string) => {
  try {
-  const response = await api.patch<GetIncidentResponse>(`/incident/delete_incident/${id}`, {
-   status,
-  });
-  return { success: true, data: response.data.data };
+  const response = await api.delete<DeleteIncidentResponse>(
+   `/incident/delete_incident/${id}`
+  );
+  return { success: true, message: response.data.message };
  } catch (error: any) {
+  console.log("Erreur suppression incident:", error?.response?.status, error?.response?.data ?? error?.message);
   return {
    success: false,
    message:
     error?.response?.data?.message ||
-    "Erreur lors de la mise à jour de l'incident",
+    "Erreur lors de la suppression de l'incident",
   };
  }
 };

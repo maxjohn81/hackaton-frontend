@@ -2,12 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Share2, Sliders, Car, Construction, AlertTriangle, Loader2 } from "lucide-react";
+import { Search, Share2, Sliders, Car, Construction, AlertTriangle, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getAllIncidentsService, Incident } from "@/services/incidentService";
+import {
+ AlertDialog,
+ AlertDialogAction,
+ AlertDialogCancel,
+ AlertDialogContent,
+ AlertDialogDescription,
+ AlertDialogFooter,
+ AlertDialogHeader,
+ AlertDialogTitle,
+ AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { getAllIncidentsService, deleteIncidentService, Incident } from "@/services/incidentService";
 import { toast } from "sonner";
 
 function timeAgo(date: string | Date) {
@@ -74,10 +85,13 @@ export default function IncidentDashboard() {
   };
   fetchIncidents();
 
-  // Rafraîchissement automatique toutes les 30s pour rester "Live"
   const interval = setInterval(fetchIncidents, 30000);
   return () => clearInterval(interval);
  }, []);
+
+ const handleIncidentDeleted = (id: string) => {
+  setIncidents((prev) => prev.filter((i) => i.id !== id));
+ };
 
  const filtered = incidents.filter((incident) => {
   const matchesFilter = activeFilter === "Tous les types" || incident.type === activeFilter;
@@ -157,14 +171,15 @@ export default function IncidentDashboard() {
      </div>
     ) : filtered.length === 0 ? (
      <p className="py-8 text-center text-sm text-muted-foreground">
-      Aucun incident .
+      Aucun incident.
      </p>
     ) : (
      filtered.map((incident) => (
       <IncidentCard
        key={incident.id}
        incident={incident}
-       onClick={() => router.push(`/admin/incidents/${incident.id}`)}
+       onClick={() => router.push(`/admin/incident/${incident.id}`)}
+       onDeleted={handleIncidentDeleted}
       />
      ))
     )}
@@ -184,10 +199,32 @@ function StatCard({ label, value }: { label: string; value: number }) {
  );
 }
 
-function IncidentCard({ incident, onClick }: { incident: Incident; onClick: () => void }) {
+function IncidentCard({
+ incident,
+ onClick,
+ onDeleted,
+}: {
+ incident: Incident;
+ onClick: () => void;
+ onDeleted: (id: string) => void;
+}) {
  const [imgError, setImgError] = useState(false);
+ const [isDeleting, setIsDeleting] = useState(false);
  const FallbackIcon = fallbackIcons[incident.type];
  const imageSrc = incident.image || defaultImages[incident.type];
+
+ const handleDelete = async () => {
+  setIsDeleting(true);
+  const result = await deleteIncidentService(incident.id);
+  setIsDeleting(false);
+
+  if (result.success) {
+   toast.success("Incident supprimé.");
+   onDeleted(incident.id);
+  } else {
+   toast.error(result.message);
+  }
+ };
 
  return (
   <Card className="cursor-pointer transition-colors hover:border-foreground/30" onClick={onClick}>
@@ -219,12 +256,39 @@ function IncidentCard({ incident, onClick }: { incident: Incident; onClick: () =
     </div>
 
     <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-     <Button size="sm" className="flex-1 sm:flex-none">
+     {/* <Button size="sm" className="flex-1 sm:flex-none">
       {actionLabels[incident.type]}
-     </Button>
+     </Button> */}
      <Button size="icon" variant="outline">
       <Share2 className="h-4 w-4" />
      </Button>
+
+     <AlertDialog>
+      <AlertDialogTrigger asChild>
+       <Button size="icon" variant="outline" className="text-red-500 hover:bg-red-50 hover:text-red-600">
+        <Trash2 className="h-4 w-4" />
+       </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+       <AlertDialogHeader>
+        <AlertDialogTitle>Supprimer cet incident ?</AlertDialogTitle>
+        <AlertDialogDescription>
+         Cette action est irréversible. L'incident{" "}
+         <strong>{incident.id}</strong> sera définitivement supprimé.
+        </AlertDialogDescription>
+       </AlertDialogHeader>
+       <AlertDialogFooter>
+        <AlertDialogCancel>Annuler</AlertDialogCancel>
+        <AlertDialogAction
+         onClick={handleDelete}
+         disabled={isDeleting}
+         className="bg-red-500 hover:bg-red-600"
+        >
+         {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Supprimer"}
+        </AlertDialogAction>
+       </AlertDialogFooter>
+      </AlertDialogContent>
+     </AlertDialog>
     </div>
    </CardContent>
   </Card>

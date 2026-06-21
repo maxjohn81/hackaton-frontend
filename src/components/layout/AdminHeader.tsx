@@ -63,7 +63,7 @@ export default function AdminHeader({
         <Input
           type="search"
           className="w-full pl-10 h-10 rounded-xl bg-muted/50 border-none text-xs focus-visible:ring-primary/20"
-          placeholder="Rechercher un candidat, une offre..."
+          placeholder="Rechercher..."
         />
         <Search
           size={16}
