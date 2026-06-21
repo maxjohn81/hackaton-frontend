@@ -163,7 +163,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(20px,420px)] overflow-hidden">
+      <div className="grid gap-4 sm:space-y-20  lg:grid-cols-[minmax(0,1fr)_minmax(200px,420px)] overflow-hidden">
         <div className="rounded-3xl    h-70 md:150 ">
           <div className="relative overflow-hidden rounded-[2rem] border border-slate-700/80 bg-slate-950/80">
             <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-slate-700/80 bg-slate-950/90 px-3 py-2 text-sm text-slate-100 shadow-xl shadow-slate-950/20">
@@ -171,7 +171,7 @@ export default function Dashboard() {
               Système opérationnel - Live
             </div>
 
-            <div className="relative h-[260px] sm:h-[500px] md:h-[620px]  linear-gradient(180deg,_#0f172a_0%,_#020617_100%)]">
+            <div className="relative h-70 sm:h-90 lg:h-150 md:h-90  linear-gradient(180deg,_#0f172a_0%,_#020617_100%)]">
                <Map/>
             </div>
           </div>
