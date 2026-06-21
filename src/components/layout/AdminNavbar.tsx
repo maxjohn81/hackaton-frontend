@@ -60,7 +60,8 @@ export default function AdminNavbar({
     <>
       {/* sidebar desktop */}
       <aside className="relative w-64 h-screen hidden md:flex flex-col border-r">
-        <div className="p-6 text-2xl text-center font-bold border-b border-stone-300">
+        <div className="flex p-6 text-2xl text-center font-bold border-b border-stone-300">
+          <h1 className="text-3xl text-black">SmArT tRaFFiC</h1>
           <Image src={logosmart} alt="Logo smart" className="w-20 mx-auto" />
         </div>
         <div>

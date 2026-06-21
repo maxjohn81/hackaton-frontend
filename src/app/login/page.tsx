@@ -28,6 +28,8 @@ import { useRouter } from "next/navigation";
 import { useAuthSmart } from "@/contexts/AuthContext";
 import { loginService } from "@/services/authService";
 import { toast } from "sonner";
+import Link from "next/link";
+import ModeToggle from "@/components/mode_toggle";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -89,7 +91,8 @@ export default function LoginPage() {
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center  space-y-10">
+      <ModeToggle />
       {/* Container principal avec une ombre douce */}
       <Card className="w-full max-w-5xl p-0 overflow-hidden border-none rounded-[2rem] ">
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[500px]">

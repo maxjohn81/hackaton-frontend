@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ModeToggle from "@/components/mode_toggle";
 import LanguageSelector from "@/components/language-selector";
+import logosmart from "./../../../public/smart.png";
 
 export default function Navbar() {
  const [isOpen, setIsOpen] = useState(false);
@@ -44,28 +45,13 @@ export default function Navbar() {
   <>
    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-white/75 dark:bg-background/75 backdrop-blur-lg">
     <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-     <div className="flex h-16 items-center justify-between">
+     <div className="flex h-20 items-center justify-between">
       {/* LOGO */}
-      <Link
-       href="/"
-       className="relative h-14 w-45 flex-shrink-0"
-       onClick={() => setIsOpen(false)}
-      >
-       <Image
-        src="/smart.png"
-        alt="smart Logo"
-        fill
-        className="object-contain rounded-2xl object-left dark:hidden"
-        priority
-       />
-       <Image
-        src="/smart.png"
-        alt="smart Logo"
-        fill
-        className="object-contain rounded-2xl object-left hidden dark:block"
-        priority
-       />
-      </Link>
+      <div className="flex items-center justify-between p-6 text-2xl text-center font-bold border-b border-stone-300">
+        
+          <Image src={logosmart} alt="Logo smart" className="w-20 mx-auto" />
+          <h1 className="text-3xl text-black dark:text-slate-100">SmArT tRaFFiC</h1>
+        </div>
 
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-9 text-sm uppercase font-semibold tracking-wide">
